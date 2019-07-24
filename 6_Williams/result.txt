@@ -1,0 +1,18 @@
+
+	 Simultaneous Tests for General Linear Hypotheses
+
+Multiple Comparisons of Means: Williams Contrasts
+
+
+Fit: aov(formula = score ~ group)
+
+Linear Hypotheses:
+         Estimate Std. Error t value Pr(>|t|)    
+C 1 == 0   15.166      1.443  10.507   <1e-09 ***
+C 2 == 0   12.372      1.250   9.898   <1e-09 ***
+C 3 == 0   10.446      1.179   8.864   <1e-09 ***
+C 4 == 0    8.695      1.141   7.620   <1e-09 ***
+---
+Signif. codes:  0 ¡®***¡¯ 0.001 ¡®**¡¯ 0.01 ¡®*¡¯ 0.05 ¡®.¡¯ 0.1 ¡® ¡¯ 1
+(Adjusted p values reported -- single-step method)
+
