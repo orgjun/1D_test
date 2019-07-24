@@ -22,6 +22,9 @@ output$T_selectInputs <- renderUI({
   
 })
 
+observeEvent(input$T_clear,{session$reload()})
+observeEvent(input$T_clear_2,{session$reload()})
+
 #new
 T_X<-reactive({
   

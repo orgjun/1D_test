@@ -22,10 +22,16 @@ output$D_selectInputs <- renderUI({
 })
 
 
-D_X<-reactive({
+observeEvent(input$D_clear,{session$reload()})
+observeEvent(input$D_clear_2,{session$reload()})
 
+
+
+D_X<-reactive({
+  
   inFile<-input$D_file
   
+ 
   
   if (is.null(inFile)){#file or data
     

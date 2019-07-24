@@ -22,6 +22,9 @@ output$SD_selectInputs <- renderUI({
   
 })
 
+observeEvent(input$SD_clear,{session$reload()})
+observeEvent(input$SD_clear_2,{session$reload()})
+
 #new
 SD_X<-reactive({
   

@@ -1,14 +1,2 @@
-
-	 Simultaneous Tests for General Linear Hypotheses
-
-Multiple Comparisons of Means: Dunnett Contrasts
-
-
-Fit: aov(formula = score ~ group)
-
-Linear Hypotheses:
-                        Estimate Std. Error t value Pr(>|t|)
-group_2 - group_1 == 0 9.647e-13  3.325e+03   0.000     1.00
-group_3 - group_1 == 0 4.267e+03  3.325e+03   1.283     0.39
-(Adjusted p values reported -- single-step method)
-
+       5        4        3        2 
+5.522148 4.494916 3.759204 2.192194 

@@ -1,23 +1,25 @@
   sidebarLayout(
     sidebarPanel(
       tabsetPanel(
-        tabPanel("Manual input",
+        tabPanel("手入力",
                  p(br()),
-                 helpText("Missing value is input as NA"),
+                 helpText("欠損値はNAと表示されます。"),
                  
                  ## disable on chrome
                  actionButton("T_obs","add"),
                  
-                 uiOutput("T_selectInputs")
+                 uiOutput("T_selectInputs"),
+                 actionButton("T_clear","clear")
                  
         ),
         
-        tabPanel("CSV",
+        tabPanel("アップロードCSVファイル",
                  helpText("データが入っているファイルを選んでください。
                ただし、データの形式は行数がグループ数になるようにしてください。"),
                  
-                 fileInput('T_file', 'Choose CSV File',
-                           accept=c('text/csv', 'text/comma-separated-values,text/plain', '.csv'))
+                 fileInput('T_file', 'CSVファイルを指定してください',
+                           accept=c('text/csv', 'text/comma-separated-values,text/plain', '.csv')),
+                 actionButton("T_clear_2","clear")
                  
         )
       )),

@@ -22,6 +22,9 @@ output$W_selectInputs <- renderUI({
   
 })
 
+observeEvent(input$W_clear,{session$reload()})
+observeEvent(input$W_clear_2,{session$reload()})
+
 #new
 W_X<-reactive({
   
