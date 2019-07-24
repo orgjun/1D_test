@@ -1,20 +1,20 @@
-output$selectInputs <- renderUI({
+output$D_selectInputs <- renderUI({
   w <- ""
   
-  if(input$obs!=0){
+  if(input$D_obs!=0){
     isolate({
-      w <- paste(w, textInput("y", "group_1", 
-                              value = input[[sprintf("y",0)]]))
-    for(i in 1:(input$obs)) {
-      w <- paste(w, textInput(paste0("x", i, sep = ""), paste0("group_", i+1, sep = ""), 
-        value = input[[sprintf("x%d",i)]])) ## or value = "4 \n5 \n 6"
+      w <- paste(w, textInput("D_y", "group_1", 
+                              value = input[[sprintf("D_y",0)]]))
+    for(i in 1:(input$D_obs)) {
+      w <- paste(w, textInput(paste0("D_x", i, sep = ""), paste0("group_", i+1, sep = ""), 
+        value = input[[sprintf("D_x%d",i)]])) ## or value = "4 \n5 \n 6"
     }
     
     HTML(w)
   })
   
   }else{ 
-    w <- paste(w, textInput("y", "group_1", 
+    w <- paste(w, textInput("D_y", "group_1", 
                             value = "")) ## or value = "1 \n2 \n 3"
     HTML(w)
   }
@@ -22,25 +22,25 @@ output$selectInputs <- renderUI({
 })
 
 
-X<-reactive({
+D_X<-reactive({
 
   inFile<-input$D_file
   
   
   if (is.null(inFile)){#file or data
     
-    if(input$obs!=0)#X and Y are definded
+    if(input$D_obs!=0)#X and Y are definded
       {
-      y_both <- str_trim(input$y, side = "both")
+      y_both <- str_trim(input$D_y, side = "both")
       Y <- as.numeric(unlist(strsplit(y_both,  split="[\n, \t, ]+")))
       Y <- data.frame(Y=Y)
       Ylengthnum<-nrow(Y)#number=nrow NULL=0
       
-      truel <- input$obs
+      truel <- input$D_obs
       X <- vector("list", truel)
 
       nobs <- c(1:truel) ## total number of x
-      col <- paste0("x", nobs) ## create a list of x name, x1 x2 x3...
+      col <- paste0("D_x", nobs) ## create a list of x name, x1 x2 x3...
       
       Xlength<-c()#vector
         
@@ -72,7 +72,7 @@ X<-reactive({
   }else{
       tbl <- read.csv(
         inFile$datapath,
-        header = TRUE)
+        header = F)
      return(tbl)
   }
 })
@@ -81,13 +81,13 @@ X<-reactive({
 
 
   
-  output$D_table <- renderTable({X()})
+  output$D_table <- renderTable({D_X()})
   
 
   D_compute<- function(){
-    if(is.data.frame(X())){
+    if(is.data.frame(D_X())){
     sink("result.txt")
-    tbl <- X()
+    tbl <- D_X()
     a <- as.matrix(tbl)
     b <- t(a)
     c <- as.vector(b)
@@ -103,7 +103,7 @@ X<-reactive({
   }
   
   output$D_results<-renderPrint({
-    if (is.data.frame(X()))
+    if (is.data.frame(D_X()))
     {tryCatch({D_compute()},
               error = function(e){HTML("Error in your data!")})}
     else{return("No outputs!")}#或可改成无实验组X

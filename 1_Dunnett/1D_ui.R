@@ -6,9 +6,9 @@ sidebarLayout(
                  helpText("Missing value is input as NA"),
                  
                  ## disable on chrome
-                 actionButton("obs","add"),
+                 actionButton("D_obs","add"),
                  
-                 uiOutput("selectInputs")
+                 uiOutput("D_selectInputs")
 
         ),
       

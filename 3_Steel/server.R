@@ -5,8 +5,8 @@ shinyServer(
   
   function(input, output,session) {
     
-    #panel 2 Shirley-Williams
-    source("2SW_server.R", local=TRUE,encoding = "utf-8")$value
+    #panel 3 Steel
+    source("3S_server.R", local=TRUE,encoding = "utf-8")$value
     
     ##########----------##########----------##########
     
