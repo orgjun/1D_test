@@ -1,4 +1,6 @@
 library(shiny)
+if(!require("stringr")) install.packages("stringr")
+library("stringr")
 
 shinyUI(navbarPage(
     "Multiple comparison test",
@@ -10,3 +12,4 @@ shinyUI(navbarPage(
   )
 
 )
+

@@ -1,50 +1,91 @@
 output$selectInputs <- renderUI({
   w <- ""
-  w <- paste(w, textInput("y", "y", value = input[[sprintf("y",0)]]))
-  for(i in 1:(input$obs+1)) {
-      w <- paste(w, textInput(paste("x", i, sep = ""), paste("x", i, sep = ""), value = input[[sprintf("x%d",i)]]))
+  
+  if(input$obs!=0){
+    isolate({
+      w <- paste(w, textInput("y", "group_1", 
+                              value = input[[sprintf("y",0)]]))
+    for(i in 1:(input$obs)) {
+      w <- paste(w, textInput(paste0("x", i, sep = ""), paste0("group_", i+1, sep = ""), 
+        value = input[[sprintf("x%d",i)]])) ## or value = "4 \n5 \n 6"
+    }
+    
+    HTML(w)
+  })
+  
+  }else{ 
+    w <- paste(w, textInput("y", "group_1", 
+                            value = "")) ## or value = "1 \n2 \n 3"
+    HTML(w)
   }
-  HTML(w)
+
 })
+
 
 X<-reactive({
+
   inFile<-input$D_file
-  if (is.null(inFile)){
+  
+  
+  if (is.null(inFile)){#file or data
+    
+    if(input$obs!=0)#X and Y are definded
+      {
+      y_both <- str_trim(input$y, side = "both")
+      Y <- as.numeric(unlist(strsplit(y_both,  split="[\n, \t, ]+")))
+      Y <- data.frame(Y=Y)
+      Ylengthnum<-nrow(Y)#number=nrow NULL=0
       
-    if(input$obs!=0){
-      Y <- as.numeric(unlist(strsplit(input$y, "[\n, \t, ]")))
-      ylist <- data.frame(Y = Y)
-      xlist<-data.frame(Y = Y)
- 
-      obsx<-paste("x",(input$obs+1))
-      X <- as.numeric(unlist(strsplit(input$obsx, "[\n, \t, ]")))
+      truel <- input$obs
+      X <- vector("list", truel)
+
+      nobs <- c(1:truel) ## total number of x
+      col <- paste0("x", nobs) ## create a list of x name, x1 x2 x3...
       
-      # xlist<-cbind(xlist,X)
-      # names(xlist) = unlist(strsplit(input$cn2, "[\n, \t, ]"))
-      return(x)
+      Xlength<-c()#vector
+        
+      for (i in nobs){
+        x_both <- str_trim(input[[as.character(col[i])]], side = "both")
+        X[[i]] <- as.numeric(unlist(strsplit(
+          x_both,  ## input$x1, input$x2...
+          split="[\n, \t, ]+")))
+        Xlength[i]<-length(X[[i]])
+      }
+      
+      TFlogic<-all(Xlength==Ylengthnum)#判断整个X的长度相同
+      if(TFlogic){
+        X <- as.data.frame(X)
+
+        if(nrow(Y)!=0){
+          xlist <-cbind.data.frame(Y,X)
+
+          X<-t(as.matrix(xlist))
+          X<-data.frame(X)
+          return(X)
+        
+        }else{return("wrong 3: Please put in all of your data.")}
+      
+      }else{return("wrong 2: Please put data in the same length.")}
     
+    }else{return("wrong 1: Please put in your data.")}
     
-    
-    }else{
-    return(NULL)
-    }
   }else{
-    tbl <- read.csv(inFile$datapath,header = F)
-    return(tbl)}
+      tbl <- read.csv(
+        inFile$datapath,
+        header = TRUE)
+     return(tbl)
+  }
 })
 
 
 
-#output$selectInputs<-renderUI({
-#  for (i in 0:input$obs) {
-#  HTML(tags$textarea(id = paste("x",input$obs),rows = 10,"4.2\n5.3\n7.6\n6.7\n6.3\n3.5\n5.8\n6.3\n3.2\n4.6\n5.5\n5.2\n4.6\n4.8\n4.5\n5.3\n4.3\n4.3\n6.2\n6.7")
-#)}
-#   })
 
   
   output$D_table <- renderTable({X()})
   
-  D_compute <- function(){
+
+  D_compute<- function(){
+    if(is.data.frame(X())){
     sink("result.txt")
     tbl <- X()
     a <- as.matrix(tbl)
@@ -57,15 +98,16 @@ X<-reactive({
     print(t)
     sink()
     return(t)
+    }
+
   }
   
-  
   output$D_results<-renderPrint({
-    
-    inFile <- input$D_file
-    if (is.null(inFile))
-      return("No inputs")
-    D_compute()
+    if (is.data.frame(X()))
+    {tryCatch({D_compute()},
+              error = function(e){HTML("Error in your data!")})}
+    else{return("No outputs!")}#或可改成无实验组X
+
   })
   
   
