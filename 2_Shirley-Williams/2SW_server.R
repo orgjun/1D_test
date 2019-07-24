@@ -23,25 +23,25 @@ output$SW_selectInputs <- renderUI({
 })
 
 #new
-D_X<-reactive({
+SW_X<-reactive({
   
-  inFile<-input$D_file
+  inFile<-input$SW_file
   
   
   if (is.null(inFile)){#file or data
     
-    if(input$D_obs!=0)#X and Y are definded
+    if(input$SW_obs!=0)#X and Y are definded
     {
-      y_both <- str_trim(input$D_y, side = "both")
+      y_both <- str_trim(input$SW_y, side = "both")
       Y <- as.numeric(unlist(strsplit(y_both,  split="[\n, \t, ]+")))
       Y <- data.frame(Y=Y)
       Ylengthnum<-nrow(Y)#number=nrow NULL=0
       
-      truel <- input$D_obs
+      truel <- input$SW_obs
       X <- vector("list", truel)
       
       nobs <- c(1:truel) ## total number of x
-      col <- paste0("D_x", nobs) ## create a list of x name, x1 x2 x3...
+      col <- paste0("SW_x", nobs) ## create a list of x name, x1 x2 x3...
       
       Xlength<-c()#vector
       
@@ -73,20 +73,13 @@ D_X<-reactive({
   }else{
     tbl <- read.csv(
       inFile$datapath,
-      header = TRUE)
+      header = F)
     return(tbl)
   }
 })
 
 #change
-output$SW_table <- renderTable({
-    
-    inFile <- input$SW_file
-    if (is.null(inFile))
-      return(NULL)
-    tbl <- read.csv(inFile$datapath,header = F)
-    return(tbl)
-  })
+output$SW_table <- renderTable({SW_X()})
   
   Shirley.Williams <- function( data,  group,   method=c("up", "down")){
     OK <- complete.cases(data, group)                   
@@ -113,30 +106,31 @@ output$SW_table <- renderTable({
   }
   
   
-  
+ #change 
   SW_compute <- function(){
-    sink("result.txt")
-    inFile <- input$SW_file
-    tbl <- read.csv(inFile$datapath, header = F)
-    a <- as.matrix(tbl)
-    b <- t(a)
-    c <- as.vector(b)
-    data <- c[!is.na(c)]
-    group <- rep(1:nrow(a),c(apply(!is.na(tbl),1,sum)))
-    t <- Shirley.Williams(data, group, method = "up")
-    
-    print(t)
-    sink()
-    return(t)
+    if(is.data.frame(SW_X())){
+      sink("result.txt")
+      tbl <- SW_X()
+      a <- as.matrix(tbl)
+      b <- t(a)
+      c <- as.vector(b)
+      data <- c[!is.na(c)]
+      group <- rep(1:nrow(a),c(apply(!is.na(tbl),1,sum)))
+      t <- Shirley.Williams(data, group, method = "up")
+      
+      print(t)
+      sink()
+      return(t)
+    }
   }
   
   
+  
   output$SW_results<-renderPrint({
-    
-    inFile <- input$SW_file
-    if (is.null(inFile))
-      return("No inputs")
-    SW_compute()
+    if (is.data.frame(SW_X()))
+    {tryCatch({SW_compute()},
+              error = function(e){HTML("Error in your data!")})}
+    else{return("No outputs!")}
   })
   
   
@@ -148,3 +142,5 @@ output$SW_table <- renderTable({
       file.copy("result.txt", file)
     }
   )
+  
+
